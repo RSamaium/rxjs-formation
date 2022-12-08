@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { map, Observable } from 'rxjs';
+import { interval, map, Observable, switchMap } from 'rxjs';
 
 export interface IMessage {
   userId: number
@@ -30,6 +30,13 @@ export class MessageService {
       .pipe(
         map((messages: IMessage[]) => 
           messages.map(message => new Message(message)))
+      )
+  }
+
+  intervalFetch(): Observable<Message[]> {
+    return interval(1000)
+      .pipe(
+        switchMap(() => this.getAll())
       )
   }
 }
