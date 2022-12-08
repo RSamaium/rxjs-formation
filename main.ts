@@ -1,23 +1,18 @@
-import { Observable, Subscriber } from 'rxjs'
+import { bufferTime, map, Observable, Subscriber } from 'rxjs'
 
-const obs$ = new Observable((subscriber: Subscriber<string>) => {
-    setTimeout(() => {
-        subscriber.next('A')
-    }, 100)
-    setTimeout(() => {
-        subscriber.next('B')
-    }, 200)
-    setTimeout(() => {
-        subscriber.next('C')
-    }, 300)
-    setTimeout(() => {
-        subscriber.next('D')
-        subscriber.complete()
-    }, 3000)
+const obs$ = new Observable((subscriber: Subscriber<string | number>) => {
+    const interval = setInterval(() => {
+        const rand = Math.random()
+        subscriber.next(rand)
+        console.log('--', rand)
+    }, 1000)
+    return () => {
+        clearInterval(interval)
+    }
 })
 
 const observer = {
-    next(letter: string) {
+    next(letter: number) {
         console.log(letter)
     },
     error(err: Error) {
@@ -28,4 +23,11 @@ const observer = {
     }
 }
 
-obs$.subscribe(observer)
+const subscription = obs$
+    .pipe(
+        bufferTime(500),
+        map(el => el.length)
+    )
+    .subscribe(observer)
+
+subscription.unsubscribe()
