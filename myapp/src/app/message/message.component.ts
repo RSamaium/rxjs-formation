@@ -18,6 +18,12 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('mybutton')
   btn!: ElementRef
 
+  @ViewChild('msg')
+  chatInput!: ElementRef
+
+  @ViewChild('send')
+  btnSend!: ElementRef
+
   constructor(
     private messageService: MessageService,
     private userService: UserService
@@ -26,11 +32,17 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit() {
     const btn$ = fromEvent(this.btn.nativeElement, 'click')
       .pipe(
-          switchMap(event => interval(1000))
+        switchMap(event => interval(1000))
       )
       .subscribe((nb) => {
-         console.log(nb)
+        console.log(nb)
       })
+    this.messageService.messageChanges(
+      this.chatInput.nativeElement,
+      this.btnSend.nativeElement
+    ).subscribe((message: Message) => {
+      console.log('message créé', message)
+    })
   }
 
   ngOnInit(): void {
@@ -41,26 +53,26 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
     // this.messageService.getAll().subscribe((messages: Message[]) => {
     //   this.messages = messages
     // })
-   /* this.userService.getAll()
+    /* this.userService.getAll()
+       .pipe(
+         // create witch switchMap function
+         switchMap((users: User[]) => {
+           // create witch mergeMap function
+           return this.messageService.getAll()
+         })
+       ).subscribe(() => {
+ 
+       })
+       */
+
+    /*forkJoin([ this.userService.getAll(), this.messageService.getAll() ])
       .pipe(
-        // create witch switchMap function
-        switchMap((users: User[]) => {
-          // create witch mergeMap function
-          return this.messageService.getAll()
-        })
-      ).subscribe(() => {
 
-      })
-      */
+      )
+      .subscribe(([ users, messages ]: [User[], Message[]]) => {
+         console.log(users, messages)
+      })*/
 
-      /*forkJoin([ this.userService.getAll(), this.messageService.getAll() ])
-        .pipe(
-
-        )
-        .subscribe(([ users, messages ]: [User[], Message[]]) => {
-           console.log(users, messages)
-        })*/
-     
   }
 
   ngOnDestroy() {

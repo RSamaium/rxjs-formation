@@ -1,4 +1,6 @@
 <ul>
+    <input type="text" #msg>
+    <button #send>Envoyer</button>
     <li *ngFor="let message of messages">
         {{ message.getBody() }}
     </li>
