@@ -1,5 +1,5 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { forkJoin, fromEvent, interval, mergeMap, Observable, switchMap } from 'rxjs';
+import { AfterViewInit, Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { forkJoin, fromEvent, interval, mergeMap, Observable, Subscription, switchMap } from 'rxjs';
 import { IMessage, Message, MessageService } from 'src/app/core/services/message.service';
 import { User, UserService } from 'src/app/core/services/user.service';
 
@@ -9,8 +9,11 @@ import { User, UserService } from 'src/app/core/services/user.service';
   templateUrl: './message.component.html',
   styleUrls: ['./message.component.css']
 })
-export class MessageComponent implements OnInit, AfterViewInit {
-  messages: Observable<Message[]> = new Observable()
+export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
+  // préférer pipe async !
+  //messages: Observable<Message[]> = new Observable()
+  messages: any
+  subscriptionMessage!: Subscription
 
   @ViewChild('mybutton')
   btn!: ElementRef
@@ -31,7 +34,10 @@ export class MessageComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.messages = this.messageService.intervalFetch()
+    this.subscriptionMessage = this.messageService.intervalFetch()
+      .subscribe((messages) => {
+        this.messages = messages
+      })
     // this.messageService.getAll().subscribe((messages: Message[]) => {
     //   this.messages = messages
     // })
@@ -55,5 +61,9 @@ export class MessageComponent implements OnInit, AfterViewInit {
            console.log(users, messages)
         })*/
      
+  }
+
+  ngOnDestroy() {
+    this.subscriptionMessage.unsubscribe()
   }
 }
