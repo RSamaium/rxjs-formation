@@ -1,7 +1,8 @@
+import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { debounceTime, distinctUntilChanged } from 'rxjs';
-import { MessageService } from '../core/services/message.service';
+import { AbstractControl, FormControl } from '@angular/forms';
+import { debounceTime, distinctUntilChanged, map, Observable } from 'rxjs';
+import { IMessage, Message, MessageService } from '../core/services/message.service';
 
 @Component({
   selector: 'app-search',
@@ -9,9 +10,19 @@ import { MessageService } from '../core/services/message.service';
   styleUrls: ['./search.component.css']
 })
 export class SearchComponent implements OnInit {
-  search: FormControl = new FormControl()
+  search: FormControl = new FormControl('', [], [
+    (input: AbstractControl): Observable<{ messageExists: boolean } | null> => {
+       return this.http.get<IMessage>('https://jsonplaceholder.typicode.com/posts/1')
+        .pipe(
+          map(message => message.title?.includes(input.value) ? { messageExists: true } : null)
+        )
+    }
+  ])
 
-  constructor(private messageService: MessageService) {}
+  constructor(
+    private messageService: MessageService,
+    private http: HttpClient
+  ) {}
 
   ngOnInit(): void {
     this.search.valueChanges

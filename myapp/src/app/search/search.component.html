@@ -1,1 +1,4 @@
+<div *ngIf="search.hasError('messageExists')">
+    Message existe déjà
+</div>
 <input type="text" placeholder="Rechercher" [formControl]="search">
