@@ -14,6 +14,7 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
   //messages: Observable<Message[]> = new Observable()
   messages: any
   notifierMessage$: Subject<void> = new Subject()
+  search$: Observable<string> = this.messageService.search$
   //subscriptionMessage!: Subscription
 
   @ViewChild('mybutton')
@@ -47,6 +48,10 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    /*this.messageService.search$.subscribe((str: string) => {
+       console.log(str)
+    })*/
+
     this.messageService.intervalFetch()
       .pipe(
         takeUntil(this.notifierMessage$)

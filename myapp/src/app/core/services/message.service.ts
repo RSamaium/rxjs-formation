@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, empty, filter, fromEvent, interval, map, Observable, of, retry, retryWhen, switchMap, throwError, withLatestFrom } from 'rxjs';
+import { BehaviorSubject, catchError, empty, filter, fromEvent, interval, map, Observable, of, retry, retryWhen, switchMap, throwError, withLatestFrom } from 'rxjs';
 
 export interface IMessage {
   userId: number
@@ -22,8 +22,17 @@ export class Message {
 })
 export class MessageService {
   readonly url: string = 'https://jsonplaceholder.typicode.com/posts'
+  private _search$: BehaviorSubject<string> = new BehaviorSubject('') // state
+
+  get search$(): Observable<string> { // getter or selector
+    return this._search$.asObservable()
+  }
 
   constructor(private http: HttpClient) { }
+
+  searchMessage(str: string) {
+     this._search$.next(str) // mutation
+  }
 
   getAll(): Observable<Message[]> {
     return this.http.get<IMessage[]>(this.url)

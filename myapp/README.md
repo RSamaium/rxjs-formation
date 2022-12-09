@@ -1,5 +1,2 @@
-[ IUsers ]
-
---> mergeMap
-
-[  ]
+1. Transformer le code de façon ne plus gérer la liste des messages dans le composant, mais à le gérer dans le service. Le composant doit juste souscrire à un observable pour écouter les changements d'un état
+2. Faire le filtre de la barre recherche en utilisant RXJS
