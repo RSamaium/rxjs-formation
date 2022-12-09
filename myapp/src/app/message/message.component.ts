@@ -11,7 +11,7 @@ import { User, UserService } from 'src/app/core/services/user.service';
 })
 export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
   // préférer pipe async !
-  messages$: Observable<Message[]> = this.messageService.messages$
+  messages$: Observable<Message[]> = this.messageService.messagesFiltered$
   notifierMessage$: Subject<void> = new Subject()
   search$: Observable<string> = this.messageService.search$
   //subscriptionMessage!: Subscription

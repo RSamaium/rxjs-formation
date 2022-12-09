@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, catchError, empty, filter, fromEvent, interval, map, Observable, of, retry, retryWhen, Subject, switchMap, takeUntil, tap, throwError, withLatestFrom } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, distinctUntilChanged, empty, filter, fromEvent, interval, map, Observable, of, pairwise, retry, retryWhen, Subject, switchMap, takeUntil, tap, throwError, withLatestFrom } from 'rxjs';
 
 export interface IMessage {
   userId: number
@@ -33,6 +33,15 @@ export class MessageService {
     return this._messages$.asObservable()
   }
 
+  get messagesFiltered$(): Observable<Message[]> {
+    return combineLatest([ this.messages$, this.search$  ])
+      .pipe(
+        map(([messages, search]: [Message[], string]) => {
+           return messages.filter(message => message.getBody().includes(search))
+        })
+      )
+  }
+
   constructor(private http: HttpClient) { }
 
   searchMessage(str: string) {
@@ -45,6 +54,7 @@ export class MessageService {
         map((messages: IMessage[]) =>
           messages.map(message => new Message(message))),
         tap((messages: Message[]) => {
+          const msg = this._messages$.value
           this._messages$.next(messages) // mutation
         })
       )
