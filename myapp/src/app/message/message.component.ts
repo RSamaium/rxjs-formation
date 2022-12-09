@@ -11,8 +11,7 @@ import { User, UserService } from 'src/app/core/services/user.service';
 })
 export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
   // préférer pipe async !
-  //messages: Observable<Message[]> = new Observable()
-  messages: any
+  messages$: Observable<Message[]> = this.messageService.messages$
   notifierMessage$: Subject<void> = new Subject()
   search$: Observable<string> = this.messageService.search$
   //subscriptionMessage!: Subscription
@@ -52,13 +51,7 @@ export class MessageComponent implements OnInit, AfterViewInit, OnDestroy {
        console.log(str)
     })*/
 
-    this.messageService.intervalFetch()
-      .pipe(
-        takeUntil(this.notifierMessage$)
-      )
-      .subscribe((messages) => {
-        this.messages = messages
-      })
+    this.messageService.intervalFetch(this.notifierMessage$).subscribe()
     // this.messageService.getAll().subscribe((messages: Message[]) => {
     //   this.messages = messages
     // })

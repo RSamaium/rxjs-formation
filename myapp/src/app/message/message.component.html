@@ -2,7 +2,7 @@
     <input type="text" #msg>
     <button #send>Envoyer</button>
     <h2>Recherche: {{ search$ | async }}</h2>
-    <li *ngFor="let message of messages">
+    <li *ngFor="let message of messages$ | async">
         {{ message.getBody() }}
     </li>
     <button #mybutton>Test</button>
