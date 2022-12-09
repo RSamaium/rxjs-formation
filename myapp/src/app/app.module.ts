@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http'
 import { MessageModule } from './message/message.module';
 import { AboutModule } from './about/about.module';
+import { SearchModule } from './search/search.module';
 
 @NgModule({
   declarations: [
@@ -16,6 +17,7 @@ import { AboutModule } from './about/about.module';
     AppRoutingModule,
     HttpClientModule,
     MessageModule,
+    SearchModule,
     AboutModule
   ],
   providers: [],

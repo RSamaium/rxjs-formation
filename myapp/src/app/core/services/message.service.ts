@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, empty, filter, fromEvent, interval, map, Observable, of, switchMap, throwError, withLatestFrom } from 'rxjs';
+import { catchError, empty, filter, fromEvent, interval, map, Observable, of, retry, retryWhen, switchMap, throwError, withLatestFrom } from 'rxjs';
 
 export interface IMessage {
   userId: number
@@ -58,6 +58,7 @@ export class MessageService {
         withLatestFrom(chatInput, (_, message) => message),
         filter(message => message.length > 0),
         switchMap(message => this.create({ body: message })),
+        //retry(3),
         catchError((err: Error) => {
           console.log(err)
           return throwError(() => err)
