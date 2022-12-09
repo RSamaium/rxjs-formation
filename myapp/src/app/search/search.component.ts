@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { AbstractControl, FormControl } from '@angular/forms';
-import { debounceTime, distinctUntilChanged, map, Observable } from 'rxjs';
+import { debounceTime, distinctUntilChanged, map, Observable, switchMap, timer } from 'rxjs';
 import { IMessage, Message, MessageService } from '../core/services/message.service';
 
 @Component({
@@ -12,10 +12,16 @@ import { IMessage, Message, MessageService } from '../core/services/message.serv
 export class SearchComponent implements OnInit {
   search: FormControl = new FormControl('', [], [
     (input: AbstractControl): Observable<{ messageExists: boolean } | null> => {
-       return this.http.get<IMessage>('https://jsonplaceholder.typicode.com/posts/1')
+       /*return this.http.get<IMessage>('https://jsonplaceholder.typicode.com/posts/1')
         .pipe(
           map(message => message.title?.includes(input.value) ? { messageExists: true } : null)
         )
+        */
+       return timer(2000)
+          .pipe(
+            switchMap(() => this.http.get<IMessage>('https://jsonplaceholder.typicode.com/posts/1')),
+            map(message => message.title?.includes(input.value) ? { messageExists: true } : null)
+          )
     }
   ])
 
